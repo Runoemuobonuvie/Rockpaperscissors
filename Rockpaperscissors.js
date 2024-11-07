@@ -1,84 +1,81 @@
 let playerScore = 0;
-      let computerScore = 0;
+let computerScore = 0;
 
-      function playRound(playerChoice, computerChoice){
-        if(playerChoice === null || playerChoice === undefined || playerChoice < 0|| playerChoice > 2 || isNaN(playerChoice)){
-            console.log("invalid choice");
+const choiceMap = {
+    'Rock': 0,
+    'Paper': 1,
+    'Scissors': 2
+};
+
+const choices = ['Rock', 'Paper', 'Scissors'];  
+
+function playRound(playerChoice, computerChoice) {
+    if (playerChoice === computerChoice) {
+        return 0;
+    } else if (
+        (playerChoice === 0 && computerChoice === 2) ||
+        (playerChoice === 1 && computerChoice === 0) ||
+        (playerChoice === 2 && computerChoice === 1)
+    ) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
+function updateResults(message) {
+    const resultDiv = document.getElementById("result");
+    resultDiv.textContent = message;
+}
+
+function updateScore() {
+    const scoreDiv = document.getElementById("score");
+    scoreDiv.textContent = `Player: ${playerScore} - Computer: ${computerScore}`;
+}
+
+function handleSelection(playerSelection) {
+    const playerChoice = choiceMap[playerSelection];
+    const computerChoice = Math.floor(Math.random() * 3);
+
+    const result = playRound(playerChoice, computerChoice);
+
+    if (result === 1) {  
+        playerScore++;
+        updateResults(`You won this round! Computer chose: ${choices[computerChoice]}`);
+    } else if (result === -1) {  
+        computerScore++;
+        updateResults(`Aww, You lost! Computer chose: ${choices[computerChoice]}`);
+    } else if (result === 0) {  
+        updateResults(`It's a tie! Both chose: ${choices[computerChoice]}`);
+    }
+
+    updateScore();
+
+    if (playerScore === 5 || computerScore === 5) {
+        if (playerScore === computerScore) {
+            updateResults("It's a tie! You both reached the score limit at the same time!");
+        } else if (playerScore > computerScore) {
+            updateResults("Congrats! You won the game");
+        } else {
+            updateResults("Game over! The computer won");
         }
-        else if(playerChoice === computerChoice){
-            return 0;
-        }
-        else if (
-            (playerChoice === 0 && computerChoice === 2 )||
-            (playerChoice === 1 && computerChoice === 0 )||
-            (playerChoice === 2 && computerChoice === 1)
-        ){
-            return 1;
-        }
-        else{
-            return -1;
-        }
-      }
-      // main function to play game
-      function playGame(){
-         
-        let playerScore = 0;
-        let computerScore = 0;
 
-        for (let round = 0; round < 5; round++){
-            console.log(`\nRound: ${round + 1}`);
+        restartGame();
+    }
+}
 
-            // get computer choice 
-            let computerChoice = Math.floor(Math.random() * 3);
-            let choices = ["rock", "paper", "scissors"];
-            console.log(`Computer chose: ${choices[computerChoice]}`);
+function restartGame (){
+    playerScore = 0;
+    computerScore = 0;
+    updateScore();
+    updateResults("Game reset! Start a new round!");
+   
 
-            // get human choice
-            let playerChoice = prompt("Choose rock,paper or scissors");
-            const choiceMap = {
-                "rock" : 0,
-                 "paper" : 1,
-                 "scissors" : 2
-            };
-            
-            playerChoice = choiceMap[playerChoice];
+}
 
-            // play round and get result
-            let result = playRound(playerChoice, computerChoice)
+document.getElementById("rock-btn").addEventListener('click', () => handleSelection("Rock"));
+document.getElementById("paper-btn").addEventListener('click', () => handleSelection("Paper"));
+document.getElementById("scissors-btn").addEventListener('click', () => handleSelection("Scissors"));
 
-            if (result === null){
-                console.log("Inavlid input, round skipped");
-            }
-            else if (result === 1){
-                playerScore++
-                console.log("Aww, you won this round");
-            }
-            else if (result === -1){
-                computerScore++
-                console.log("Sorry, you lost this round");
-            }
-            else{
-                console.log("It's a tie");
-            }
-            // display current result
-            console.log(`Current score - You: ${playerScore}, Computer: ${computerScore}`);
-        }
-            // final result
-            console.log("\nGame over!")
-            console.log(`Final score - You: ${playerScore}, Computer: ${computerScore}`);
+document.getElementById("restart-btn").addEventListener('click', restartGame);
 
-            if (playerScore > computerScore){
-                console.log("Yay! you won the game!");
-            }
-            else if (playerScore < computerScore){
-                console.log("Sorry, you lost the game.");
-            }
-            else {
-                console.log("It's a tie!");
-            }
-
-      }
-      // call function to start game
-        playGame();
-          
-        
